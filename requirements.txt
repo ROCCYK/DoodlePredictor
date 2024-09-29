@@ -1,7 +1,5 @@
 opencv_python==4.10.0.84
 pandas==2.2.3
-Pillow==10.4.0
 streamlit==1.38.0
 streamlit_drawable_canvas==0.9.3
 tensorflow==2.17.0
-tensorflow_intel==2.17.0
