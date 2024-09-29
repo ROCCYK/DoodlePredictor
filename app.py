@@ -355,12 +355,12 @@ cats = ['airplane',
 def print_title():
     st.title('✏️ Doodle Classifier')
     st.markdown(
-        "The architecture employed for this **Convolutional Neural Network (CNN)** doodle classifier is based on the **MobileNetV1** model. The classifier is trained using Google’s **Quick, Draw!** dataset. To enhance model performance and ensure robustness against variations in real-world doodling, the doodles are randomly augmented through rotations, shifts, shearing, zooming, and pixelation.")
+        "The architecture employed for this **Convolutional Neural Network (CNN)** doodle classifier is based on the **MobileNetV1** model. The classifier is trained using Google’s **Quick, Draw!** dataset. To enhance model performance and ensure robustness against variations in real-world doodling, the doodles are randomly augmented through rotations, shifts, shearing, zooming, and pixelation. Created by Rhichard Koh")
 
 
 def print_credits():
     st.write(
-        "Dataset from: Google's Quick, Draw! Dataset, with 50,000,000 doodles in total. The Dataset consists of 340 different classes.")
+        "Dataset from: Google's Quick, Draw! Dataset, with 50,000,000 doodles in total. The Dataset consists of 340 different classes. Created by Rhichard Koh")
 
 
 def show_canvas_opts():
@@ -471,7 +471,7 @@ def save_to_ndjson(strokes, output_path):
 
 def main():
     # Use the full page instead of a narrow central column
-    st.set_page_config(layout="wide", page_title="ROCCYK AI", page_icon=":robot_face:")
+    st.set_page_config(layout="wide", page_title="️Doodle Classifier", page_icon="✏️")
 
     print_title()
     st.markdown("""---""")
