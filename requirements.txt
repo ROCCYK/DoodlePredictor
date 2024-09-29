@@ -1,4 +1,4 @@
-opencv_python
+opencv-python-headless
 pandas
 streamlit
 streamlit_drawable_canvas
