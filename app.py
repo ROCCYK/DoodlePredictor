@@ -383,7 +383,7 @@ def draw_canvas(drawing_mode, stroke_width):
     # Create a canvas component
     canvas_result = st_canvas(
         stroke_width=stroke_width,
-        background_color="#EFEFEF",  # white-gray
+        background_color="#FFFFFF",  # white
         update_streamlit=True,
         height=300,
         width=300,
