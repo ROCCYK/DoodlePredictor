@@ -471,7 +471,7 @@ def save_to_ndjson(strokes, output_path):
 
 def main():
     # Use the full page instead of a narrow central column
-    st.set_page_config(layout="wide")
+    st.set_page_config(layout="wide", page_title="ROCCYK AI", page_icon=":robot_face:")
 
     print_title()
     st.markdown("""---""")
