@@ -7,7 +7,7 @@ This project uses a **MobileNet** architecture for classifying grayscale images.
 - **Architecture**: MobileNet, a streamlined and efficient convolutional neural network designed for mobile and embedded applications.
 - **Input**: Grayscale images.
 - **Output**: Multi-class classification.
-- **Evaluation**: The model's performance is evaluated using metrics like accuracy and a loss.
+- **Evaluation**: The model's performance is evaluated using metrics like accuracy and loss.
 
 ## How to Run the App Locally
 
