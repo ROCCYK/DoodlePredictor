@@ -404,6 +404,7 @@ def get_info():
     with col2:
         st.markdown("#### Below is the MobileNetV1's architecture.")
         st.image("MobileNet-V1-architecture.png")
+        st.image("accuracy_loss_chart.png")
 
 def top_3_accuracy(y_true, y_pred):
     return top_k_categorical_accuracy(y_true, y_pred, k=3)
