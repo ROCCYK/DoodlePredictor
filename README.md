@@ -1,4 +1,4 @@
-# Greyscale Image Classification with MobileNet
+# Doodle Classifier
 
 This project uses a **MobileNet** architecture for classifying grayscale images. The model has been optimized to handle greyscale images efficiently, leveraging the depth and speed of MobileNet, which is typically used for lightweight image classification tasks. The project includes a data pipeline, model training, evaluation, and visualization of results, including a accuracy_loss graph to assess model performance.
 
