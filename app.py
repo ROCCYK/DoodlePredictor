@@ -1,12 +1,14 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import numpy as np
 import pandas as pd
 import streamlit as st
 from PIL import Image
 from streamlit_drawable_canvas import st_canvas
-from tensorflow.keras.applications import MobileNet
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.metrics import categorical_accuracy, top_k_categorical_accuracy, categorical_crossentropy
-from tensorflow.keras.applications.mobilenet import preprocess_input
 import json
 import cv2
 
@@ -407,6 +409,7 @@ def get_info():
         st.image("accuracy_loss_chart.png")
 
 def top_3_accuracy(y_true, y_pred):
+    from tensorflow.keras.metrics import top_k_categorical_accuracy
     return top_k_categorical_accuracy(y_true, y_pred, k=3)
 
 def preds2catids(predictions):
@@ -426,6 +429,7 @@ def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
         return img
 
 def df_to_image_array_xd(df, size, lw=6, time_color=True):
+    from tensorflow.keras.applications.mobilenet import preprocess_input
     # df['drawing'] = df['drawing'].apply(json.loads)
     x = np.zeros((len(df), size, size, 1))
     for i, raw_strokes in enumerate(df.drawing.values):
@@ -486,6 +490,14 @@ def main():
 
     # # Add a button to submit the drawing
     if st.button(":mag: Predict Drawing"):
+        import tensorflow as tf
+        from tensorflow.keras.applications import MobileNet
+        from tensorflow.keras.optimizers import Adam
+        from tensorflow.keras.metrics import (
+            categorical_accuracy, top_k_categorical_accuracy, categorical_crossentropy
+        )
+        tf.config.threading.set_intra_op_parallelism_threads(1)
+        tf.config.threading.set_inter_op_parallelism_threads(1)
         if canvas_result.image_data is not None:
             img = Image.fromarray(canvas_result.image_data)
             # Save the image to a file

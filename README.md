@@ -9,7 +9,7 @@ This project uses a **MobileNet** architecture for classifying grayscale images.
 - **Output**: Multi-class classification.
 - **Evaluation**: The model's performance is evaluated using metrics like accuracy and loss.
 
-## How to Run the App Locally
+## How to Run the App Locally (Apple Silicon / macOS)
 
 1. **Clone the repository**:
     ```bash
@@ -17,22 +17,49 @@ This project uses a **MobileNet** architecture for classifying grayscale images.
     cd DoodlePredictor
     ```
 
-2. **Install required dependencies**:
-    Make sure you have Python 3.x installed. Then, create a virtual environment and install the dependencies:
+2. **Prerequisites**:
+    - macOS on Apple Silicon (M1/M2/M3)
+    - Python 3.11 (required for the pinned TensorFlow wheels)
+      - Install via Homebrew if needed:
+        ```bash
+        brew install python@3.11
+        ```
+
+3. **Create a virtual environment and install dependencies**:
     ```bash
-    python3 -m venv venv
+    /opt/homebrew/bin/python3.11 -m venv venv
     source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    python -m pip install -U pip wheel setuptools
     pip install -r requirements.txt
     ```
 
-3. **Run the Streamlit app**:
+4. **Run the Streamlit app**:
     After installing the dependencies, you can run the Streamlit app locally using the following command:
     ```bash
     streamlit run app.py
     ```
 
-4. **Access the app**:
+5. **Access the app**:
     Open your web browser and go to `http://localhost:8501` to interact with the app.
+
+### Notes
+- This project uses `tensorflow-macos==2.15.0` and `tensorflow-metal==1.1.0`, which provide prebuilt wheels for Python 3.11 on Apple Silicon. Using Python 3.12/3.13 may fail to install TensorFlow.
+- If you recreate the environment in the future, repeat the steps above. To make reinstalls reproducible, you can lock versions:
+  ```bash
+  pip freeze > requirements-lock.txt
+  # Next time:
+  pip install -r requirements-lock.txt
+  ```
+
+### Troubleshooting
+- If you previously installed `tensorflow` (CPU-only) in this repo, remove it before reinstalling:
+  ```bash
+  pip uninstall -y tensorflow
+  ```
+- If you encounter excessive TensorFlow logging, you can run with:
+  ```bash
+  TF_CPP_MIN_LOG_LEVEL=2 streamlit run app.py
+  ```
 
 ## Link to Deployed Streamlit App
 

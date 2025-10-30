@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# macOS
+.DS_Store
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# App-generated artifacts
+drawn_image.png
+output.ndjson
+
