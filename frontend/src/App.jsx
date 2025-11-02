@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useCallback, useEffect } from 'react'
 import SignatureCanvas from 'react-signature-canvas'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,16 +10,20 @@ function App() {
   const [predictions, setPredictions] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const debounceTimerRef = useRef(null)
 
   const clearCanvas = () => {
     sigCanvas.current.clear()
     setPredictions([])
     setError(null)
+    // Clear any pending debounced predictions
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
   }
 
-  const predictDrawing = async () => {
-    if (sigCanvas.current.isEmpty()) {
-      setError('Please draw something first!')
+  const makePrediction = useCallback(async () => {
+    if (!sigCanvas.current || sigCanvas.current.isEmpty()) {
       return
     }
 
@@ -28,7 +32,6 @@ function App() {
 
     try {
       // Get the canvas as a data URL
-      // CRITICAL: This is exactly how the Streamlit canvas provides the image
       const canvas = sigCanvas.current.getCanvas()
       const imageData = canvas.toDataURL('image/png')
 
@@ -54,7 +57,29 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  // Debounced prediction handler for real-time updates
+  const handleDrawingEnd = useCallback(() => {
+    // Clear any existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    // Set a new timer to predict after 600ms of inactivity
+    debounceTimerRef.current = setTimeout(() => {
+      makePrediction()
+    }, 600)
+  }, [makePrediction])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50">
@@ -82,7 +107,7 @@ function App() {
                 Draw Here
               </CardTitle>
               <CardDescription>
-                Use your mouse or touch to draw on the canvas
+                Use your mouse or touch to draw - predictions update automatically!
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -100,39 +125,30 @@ function App() {
                   penColor="#000000"
                   minWidth={2}
                   maxWidth={4}
+                  onEnd={handleDrawingEnd}
                 />
               </div>
 
               {/* Buttons */}
               <div className="flex gap-3">
                 <Button
-                  onClick={predictDrawing}
-                  disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                  size="lg"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Predicting...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Predict Drawing
-                    </>
-                  )}
-                </Button>
-                <Button
                   onClick={clearCanvas}
                   variant="outline"
                   size="lg"
-                  className="border-2"
+                  className="flex-1 border-2"
                 >
                   <Eraser className="mr-2 h-4 w-4" />
-                  Clear
+                  Clear Canvas
                 </Button>
               </div>
+
+              {/* Loading indicator for real-time predictions */}
+              {loading && (
+                <div className="flex items-center justify-center gap-2 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <Loader2 className="h-4 w-4 animate-spin text-purple-600" />
+                  <span className="text-sm text-purple-700">Analyzing your drawing...</span>
+                </div>
+              )}
 
               {/* Error Message */}
               {error && (
@@ -151,7 +167,7 @@ function App() {
                 Predictions
               </CardTitle>
               <CardDescription>
-                Top 3 predictions from the AI model
+                Live predictions as you draw
               </CardDescription>
             </CardHeader>
             <CardContent>
