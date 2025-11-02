@@ -1,6 +1,0 @@
-opencv-python-headless
-pandas
-streamlit
-streamlit_drawable_canvas
-tensorflow-macos==2.16.2
-tensorflow-metal==1.2.0
