@@ -23,10 +23,14 @@ from tensorflow.keras.metrics import categorical_accuracy, categorical_crossentr
 
 app = FastAPI()
 
-# Enable CORS for React frontend
+# Enable CORS for React frontends
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_origins=[
+        "http://localhost:3000",  # React dev server (CRA)
+        "http://localhost:5173",  # Vite dev server (default)
+        "http://localhost:5174",  # Vite dev server (alternate)
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
