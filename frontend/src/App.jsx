@@ -156,8 +156,14 @@ function App() {
     setScore(prev => prev + 1)
     clearAllTimers()
 
-    const targetName = targetObject.replace(/_/g, ' ')
-    speak(`Oh I know, it's ${targetName}!`)
+    // Cancel any ongoing speech first
+    window.speechSynthesis.cancel()
+
+    // Delay the win speech slightly to ensure previous speech is cancelled
+    setTimeout(() => {
+      const targetName = targetObject.replace(/_/g, ' ')
+      speak(`Oh I know, it's a ${targetName}!`)
+    }, 200)
   }
 
   const clearAllTimers = () => {
