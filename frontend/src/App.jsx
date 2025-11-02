@@ -426,8 +426,9 @@ function App() {
 
     lastSpokenPredictionRef.current = topPrediction
 
-    // Get Czech translation
-    const czechName = CZECH_TRANSLATIONS[topPrediction] || topPrediction.replace(/_/g, ' ')
+    // Get Czech translation - normalize underscores to spaces first
+    const normalizedPrediction = topPrediction.replace(/_/g, ' ')
+    const czechName = CZECH_TRANSLATIONS[normalizedPrediction] || normalizedPrediction
 
     // Czech phrase patterns
     const patterns = [
@@ -637,7 +638,9 @@ function App() {
 
   // Convert English prediction to Czech for display
   const getCzechPrediction = (englishPrediction) => {
-    return CZECH_TRANSLATIONS[englishPrediction] || englishPrediction.replace(/_/g, ' ')
+    // Normalize underscores to spaces before lookup
+    const normalizedPrediction = englishPrediction.replace(/_/g, ' ')
+    return CZECH_TRANSLATIONS[normalizedPrediction] || normalizedPrediction
   }
 
   return (
