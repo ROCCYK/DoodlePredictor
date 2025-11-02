@@ -10,16 +10,26 @@ function App() {
   const [predictions, setPredictions] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const debounceTimerRef = useRef(null)
+  const initialTimerRef = useRef(null)
+  const intervalTimerRef = useRef(null)
+  const isDrawingRef = useRef(false)
+  const hasStartedRef = useRef(false)
 
   const clearCanvas = () => {
     sigCanvas.current.clear()
     setPredictions([])
     setError(null)
-    // Clear any pending debounced predictions
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current)
+    // Clear any pending predictions
+    if (initialTimerRef.current) {
+      clearTimeout(initialTimerRef.current)
+      initialTimerRef.current = null
     }
+    if (intervalTimerRef.current) {
+      clearInterval(intervalTimerRef.current)
+      intervalTimerRef.current = null
+    }
+    hasStartedRef.current = false
+    isDrawingRef.current = false
   }
 
   const makePrediction = useCallback(async () => {
@@ -59,24 +69,41 @@ function App() {
     }
   }, [])
 
-  // Debounced prediction handler for real-time updates
-  const handleDrawingEnd = useCallback(() => {
-    // Clear any existing timer
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current)
-    }
+  // Handler when user starts drawing
+  const handleDrawingStart = useCallback(() => {
+    isDrawingRef.current = true
 
-    // Set a new timer to predict after 600ms of inactivity
-    debounceTimerRef.current = setTimeout(() => {
-      makePrediction()
-    }, 600)
+    // If this is the first stroke, start the prediction cycle
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true
+
+      // Make first prediction after 1 second
+      initialTimerRef.current = setTimeout(() => {
+        makePrediction()
+
+        // Then continue predicting every 1 second while drawing
+        intervalTimerRef.current = setInterval(() => {
+          if (isDrawingRef.current && !sigCanvas.current.isEmpty()) {
+            makePrediction()
+          }
+        }, 1000)
+      }, 1000)
+    }
   }, [makePrediction])
+
+  // Handler when user stops drawing (lifts mouse/touch)
+  const handleDrawingEnd = useCallback(() => {
+    isDrawingRef.current = false
+  }, [])
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current)
+      if (initialTimerRef.current) {
+        clearTimeout(initialTimerRef.current)
+      }
+      if (intervalTimerRef.current) {
+        clearInterval(intervalTimerRef.current)
       }
     }
   }, [])
@@ -125,6 +152,7 @@ function App() {
                   penColor="#000000"
                   minWidth={2}
                   maxWidth={4}
+                  onBegin={handleDrawingStart}
                   onEnd={handleDrawingEnd}
                 />
               </div>
