@@ -87,13 +87,14 @@ function App() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Canvas */}
-              <div className="border-4 border-purple-300 rounded-lg overflow-hidden bg-white shadow-inner">
+              <div className="border-4 border-purple-300 rounded-lg overflow-hidden bg-white shadow-inner inline-block">
                 <SignatureCanvas
                   ref={sigCanvas}
                   canvasProps={{
                     width: 500,
                     height: 500,
-                    className: 'w-full h-auto cursor-crosshair'
+                    className: 'cursor-crosshair',
+                    style: { width: '500px', height: '500px' }
                   }}
                   backgroundColor="#FFFFFF"
                   penColor="#000000"
