@@ -37,6 +37,8 @@ function App() {
   const isDrawingRef = useRef(false)
   const hasStartedDrawingRef = useRef(false)
   const roundStartTimeRef = useRef(null)
+  const lastSpokenPredictionRef = useRef(null)
+  const speechSynthesisRef = useRef(null)
 
   // Fetch categories on mount
   useEffect(() => {
@@ -51,6 +53,44 @@ function App() {
     } catch (err) {
       console.error('Failed to fetch categories:', err)
     }
+  }
+
+  // Speech synthesis function
+  const speak = (text) => {
+    // Cancel any ongoing speech
+    if (speechSynthesisRef.current) {
+      window.speechSynthesis.cancel()
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 1.1 // Slightly faster
+    utterance.pitch = 1.0
+    utterance.volume = 1.0
+
+    speechSynthesisRef.current = utterance
+    window.speechSynthesis.speak(utterance)
+  }
+
+  const speakPredictions = (predictionsList) => {
+    if (predictionsList.length === 0) return
+
+    // Only speak if the top prediction has changed
+    const topPrediction = predictionsList[0]
+    if (lastSpokenPredictionRef.current === topPrediction) return
+
+    lastSpokenPredictionRef.current = topPrediction
+
+    // Randomly choose between different phrase patterns
+    const patterns = [
+      `I see ${topPrediction.replace(/_/g, ' ')}`,
+      `Is it ${topPrediction.replace(/_/g, ' ')}?`,
+      `Maybe ${topPrediction.replace(/_/g, ' ')}`,
+      `Or ${topPrediction.replace(/_/g, ' ')}`,
+      `${topPrediction.replace(/_/g, ' ')}?`
+    ]
+
+    const randomPattern = patterns[Math.floor(Math.random() * patterns.length)]
+    speak(randomPattern)
   }
 
   const getRandomCategory = () => {
@@ -74,6 +114,10 @@ function App() {
     setGameState(GAME_STATES.PLAYING)
     hasStartedDrawingRef.current = false
     roundStartTimeRef.current = Date.now()
+    lastSpokenPredictionRef.current = null
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel()
 
     // Clear any existing timers
     if (initialTimerRef.current) clearTimeout(initialTimerRef.current)
@@ -101,6 +145,7 @@ function App() {
   const handleTimeUp = () => {
     setGameState(GAME_STATES.LOST)
     clearAllTimers()
+    speak("Sorry, I couldn't guess it")
   }
 
   const handleWin = () => {
@@ -110,6 +155,9 @@ function App() {
     setGameState(GAME_STATES.WON)
     setScore(prev => prev + 1)
     clearAllTimers()
+
+    const targetName = targetObject.replace(/_/g, ' ')
+    speak(`Oh I know, it's ${targetName}!`)
   }
 
   const clearAllTimers = () => {
@@ -168,6 +216,9 @@ function App() {
 
       const data = await response.json()
       setPredictions(data.predictions)
+
+      // Speak the predictions
+      speakPredictions(data.predictions)
 
       // Check if target is in predictions (case insensitive, handle underscores)
       const normalizedTarget = targetObject.toLowerCase().replace(/ /g, '_')
