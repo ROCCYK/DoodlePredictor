@@ -1,5 +1,5 @@
+streamlit>=1.30
+streamlit-drawable-canvas>=0.9.3
+tensorflow>=2.15
 opencv-python-headless
 pandas
-streamlit
-streamlit_drawable_canvas
-tensorflow
