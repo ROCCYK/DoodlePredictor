@@ -375,7 +375,7 @@ def print_credits():
 
 def show_canvas_opts():
     drawing_mode = st.selectbox(
-        ":lower_left_paintbrush: Drawing mode",
+        "🖌️ Drawing mode",
         ("freedraw", "transform"),
         index=0,  # default: freedraw
         key="drawing_mode",
@@ -398,7 +398,7 @@ def draw_canvas(drawing_mode, stroke_width):
     return canvas_result
 
 def get_info():
-    st.markdown("## :book: About This Model")
+    st.markdown("## 📖 About This Model")
     st.write("This model uses a **Convolutional Neural Network** with a **MobileNetV1** architecture to categorize hand drawn doodles.")
     st.markdown(f"- **Version:** MobileNetV1-style model fine-tuned on Quick, Draw classes")
     st.markdown(f"- **Categories:** {len(cats)}")
